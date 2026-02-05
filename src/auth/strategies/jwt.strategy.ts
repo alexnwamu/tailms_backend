@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from '../../prisma/prisma.service';
+import { UserStatus } from '../../common/enums/user-status.enum';
+import { Role } from '../../common/enums/role.enum';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -13,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { sub: string; email: string; role: string }) {
+  async validate(payload: { sub: string; email: string; role: Role }) {
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
       select: {
@@ -24,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       },
     });
 
-    if (!user || user.status !== 'ACTIVE') {
+    if (!user || user.status !== UserStatus.ACTIVE) {
       throw new Error('User not found or inactive');
     }
 
