@@ -14,7 +14,6 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   // Create test users with different roles
   const adminPassword = await bcrypt.hash('admin123', 10);
-  const instructorPassword = await bcrypt.hash('instructor123', 10);
   const studentPassword = await bcrypt.hash('student123', 10);
 
   const admin = await prisma.user.upsert({
@@ -24,17 +23,6 @@ async function main() {
       email: 'admin@tailms.com',
       password: adminPassword,
       role: 'ADMIN',
-      status: 'ACTIVE',
-    },
-  });
-
-  const instructor = await prisma.user.upsert({
-    where: { email: 'instructor@tailms.com' },
-    update: {},
-    create: {
-      email: 'instructor@tailms.com',
-      password: instructorPassword,
-      role: 'INSTRUCTOR',
       status: 'ACTIVE',
     },
   });
@@ -63,7 +51,6 @@ async function main() {
 
   console.log('Test users created:');
   console.log('Admin: admin@tailms.com / admin123');
-  console.log('Instructor: instructor@tailms.com / instructor123');
   console.log('Student: student@tailms.com / student123');
   console.log('Pending Student: pending@tailms.com / student123');
 }
