@@ -41,6 +41,43 @@ export class CreateCourseDto {
     description: 'Array of modules in the course',
     type: [CreateModuleDto],
     isArray: true,
+    example: [
+      {
+        title: 'Module 1 - Introduction to Design Thinking',
+        description: 'Getting started with design thinking fundamentals',
+        order: 1,
+        lessons: [
+          {
+            title: 'Introduction to Design thinking',
+            description: 'Overview of design thinking principles',
+            videoUrl: 'https://youtube.com/watch?v=example1',
+            duration: 600,
+            order: 1,
+          },
+          {
+            title: 'Design Thinking Process',
+            description: 'Understanding the 5 stages of design thinking',
+            videoUrl: 'https://youtube.com/watch?v=example2',
+            duration: 900,
+            order: 2,
+          },
+        ],
+      },
+      {
+        title: 'Module 2 - Practical Applications',
+        description: 'Applying design thinking in real-world scenarios',
+        order: 2,
+        lessons: [
+          {
+            title: 'Case Study Analysis',
+            description: 'Analyzing successful design thinking implementations',
+            videoUrl: 'https://youtube.com/watch?v=example3',
+            duration: 1200,
+            order: 1,
+          },
+        ],
+      },
+    ],
   })
   @IsArray()
   @ValidateNested({ each: true })
