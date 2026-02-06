@@ -14,8 +14,8 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiBearerAuth,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { CoursesService } from '../courses.service';
 import { CreateCourseDto } from '../dto/create-course.dto';
@@ -29,82 +29,18 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../common/enums/role.enum';
 
+@ApiTags('Admin Courses')
+@ApiBearerAuth()
 @Controller('admin/courses')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.ADMIN)
-@ApiTags('Admin Courses')
-@ApiBearerAuth()
 export class AdminCoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new course' })
-  @ApiResponse({
-    status: 201,
-    description: 'Course created successfully',
-    schema: {
-      example: {
-        id: 'cm1234567890abcdef1234567',
-        title: 'Introduction to Design Thinking',
-        description:
-          'An introductory course in design covering design thinking, laws and principles',
-        isPublished: false,
-        createdAt: '2024-02-05T10:30:00.000Z',
-        updatedAt: '2024-02-05T10:30:00.000Z',
-        modules: [
-          {
-            id: 'cm1234567890abcdef1234568',
-            title: 'Module 1 - Introduction to Design Thinking',
-            description: 'Getting started with design thinking fundamentals',
-            order: 1,
-            courseId: 'cm1234567890abcdef1234567',
-            lessons: [
-              {
-                id: 'cm1234567890abcdef1234569',
-                title: 'Introduction to Design thinking',
-                description: 'Overview of design thinking principles',
-                videoUrl: 'https://youtube.com/watch?v=example1',
-                duration: 600,
-                order: 1,
-                moduleId: 'cm1234567890abcdef1234568',
-              },
-              {
-                id: 'cm1234567890abcdef123456a',
-                title: 'Design Thinking Process',
-                description: 'Understanding the 5 stages of design thinking',
-                videoUrl: 'https://youtube.com/watch?v=example2',
-                duration: 900,
-                order: 2,
-                moduleId: 'cm1234567890abcdef1234568',
-              },
-            ],
-          },
-          {
-            id: 'cm1234567890abcdef123456b',
-            title: 'Module 2 - Practical Applications',
-            description: 'Applying design thinking in real-world scenarios',
-            order: 2,
-            courseId: 'cm1234567890abcdef1234567',
-            lessons: [
-              {
-                id: 'cm1234567890abcdef123456c',
-                title: 'Case Study Analysis',
-                description:
-                  'Analyzing successful design thinking implementations',
-                videoUrl: 'https://youtube.com/watch?v=example3',
-                duration: 1200,
-                order: 1,
-                moduleId: 'cm1234567890abcdef123456b',
-              },
-            ],
-          },
-        ],
-      },
-    },
-  })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 201, description: 'Course created successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -116,7 +52,6 @@ export class AdminCoursesController {
   @Get()
   @ApiOperation({ summary: 'Get all courses (including unpublished)' })
   @ApiResponse({ status: 200, description: 'Courses retrieved successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -126,11 +61,10 @@ export class AdminCoursesController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get course by ID (including unpublished)' })
+  @ApiOperation({ summary: 'Get course by ID' })
   @ApiParam({ name: 'id', description: 'Course ID' })
   @ApiResponse({ status: 200, description: 'Course retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -140,11 +74,10 @@ export class AdminCoursesController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update course' })
+  @ApiOperation({ summary: 'Update a course' })
   @ApiParam({ name: 'id', description: 'Course ID' })
   @ApiResponse({ status: 200, description: 'Course updated successfully' })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -158,11 +91,10 @@ export class AdminCoursesController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete course' })
+  @ApiOperation({ summary: 'Delete a course' })
   @ApiParam({ name: 'id', description: 'Course ID' })
   @ApiResponse({ status: 204, description: 'Course deleted successfully' })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -173,11 +105,10 @@ export class AdminCoursesController {
 
   @Post(':courseId/modules')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create module in course' })
+  @ApiOperation({ summary: 'Create a new module in a course' })
   @ApiParam({ name: 'courseId', description: 'Course ID' })
   @ApiResponse({ status: 201, description: 'Module created successfully' })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -190,11 +121,10 @@ export class AdminCoursesController {
   }
 
   @Patch('modules/:moduleId')
-  @ApiOperation({ summary: 'Update module' })
+  @ApiOperation({ summary: 'Update a module' })
   @ApiParam({ name: 'moduleId', description: 'Module ID' })
   @ApiResponse({ status: 200, description: 'Module updated successfully' })
   @ApiResponse({ status: 404, description: 'Module not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -208,11 +138,10 @@ export class AdminCoursesController {
 
   @Delete('modules/:moduleId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete module' })
+  @ApiOperation({ summary: 'Delete a module' })
   @ApiParam({ name: 'moduleId', description: 'Module ID' })
   @ApiResponse({ status: 204, description: 'Module deleted successfully' })
   @ApiResponse({ status: 404, description: 'Module not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -223,11 +152,10 @@ export class AdminCoursesController {
 
   @Post('modules/:moduleId/lessons')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create lesson in module' })
+  @ApiOperation({ summary: 'Create a new lesson in a module' })
   @ApiParam({ name: 'moduleId', description: 'Module ID' })
   @ApiResponse({ status: 201, description: 'Lesson created successfully' })
   @ApiResponse({ status: 404, description: 'Module not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -240,11 +168,10 @@ export class AdminCoursesController {
   }
 
   @Patch('lessons/:lessonId')
-  @ApiOperation({ summary: 'Update lesson' })
+  @ApiOperation({ summary: 'Update a lesson' })
   @ApiParam({ name: 'lessonId', description: 'Lesson ID' })
   @ApiResponse({ status: 200, description: 'Lesson updated successfully' })
   @ApiResponse({ status: 404, description: 'Lesson not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -258,11 +185,10 @@ export class AdminCoursesController {
 
   @Delete('lessons/:lessonId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete lesson' })
+  @ApiOperation({ summary: 'Delete a lesson' })
   @ApiParam({ name: 'lessonId', description: 'Lesson ID' })
   @ApiResponse({ status: 204, description: 'Lesson deleted successfully' })
   @ApiResponse({ status: 404, description: 'Lesson not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
@@ -279,7 +205,6 @@ export class AdminCoursesController {
     description: 'Enrollments retrieved successfully',
   })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -328,7 +333,10 @@ export class CoursesService {
     );
 
     const completedLessons = enrollment.lessonCompletions.length;
-    const progress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+    const progress =
+      totalLessons > 0
+        ? Math.round((completedLessons / totalLessons) * 100)
+        : 0;
 
     await this.prisma.enrollment.update({
       where: { id: enrollment.id },

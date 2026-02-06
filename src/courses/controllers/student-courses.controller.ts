@@ -12,8 +12,8 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiBearerAuth,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { CoursesService } from '../courses.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -21,21 +21,17 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../common/enums/role.enum';
 
+@ApiTags('Student Courses')
+@ApiBearerAuth()
 @Controller('student/courses')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.STUDENT)
-@ApiTags('Student Courses')
-@ApiBearerAuth()
 export class StudentCoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all published courses' })
-  @ApiResponse({
-    status: 200,
-    description: 'Published courses retrieved successfully',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 200, description: 'Courses retrieved successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Student access required',
@@ -45,12 +41,11 @@ export class StudentCoursesController {
   }
 
   @Get('my-enrollments')
-  @ApiOperation({ summary: "Get student's enrolled courses" })
+  @ApiOperation({ summary: 'Get current user enrollments' })
   @ApiResponse({
     status: 200,
     description: 'Enrollments retrieved successfully',
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Student access required',
@@ -60,14 +55,10 @@ export class StudentCoursesController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get published course by ID' })
+  @ApiOperation({ summary: 'Get course by ID (published only)' })
   @ApiParam({ name: 'id', description: 'Course ID' })
   @ApiResponse({ status: 200, description: 'Course retrieved successfully' })
-  @ApiResponse({
-    status: 404,
-    description: 'Course not found or not published',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Course not found' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Student access required',
@@ -80,13 +71,8 @@ export class StudentCoursesController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Enroll in a course' })
   @ApiParam({ name: 'courseId', description: 'Course ID' })
-  @ApiResponse({ status: 201, description: 'Enrolled successfully' })
-  @ApiResponse({
-    status: 400,
-    description: 'Already enrolled or course not published',
-  })
+  @ApiResponse({ status: 201, description: 'Enrollment successful' })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Student access required',
@@ -100,7 +86,6 @@ export class StudentCoursesController {
   @ApiParam({ name: 'courseId', description: 'Course ID' })
   @ApiResponse({ status: 200, description: 'Progress retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Enrollment not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Student access required',
@@ -114,12 +99,7 @@ export class StudentCoursesController {
   @ApiOperation({ summary: 'Mark lesson as complete' })
   @ApiParam({ name: 'lessonId', description: 'Lesson ID' })
   @ApiResponse({ status: 200, description: 'Lesson marked as complete' })
-  @ApiResponse({
-    status: 400,
-    description: 'Not enrolled in course or already completed',
-  })
-  @ApiResponse({ status: 404, description: 'Lesson not found' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Lesson or enrollment not found' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Student access required',
